@@ -26,10 +26,18 @@ def ellips(x0,y0,k,a,b,col):
 def coloredellips(x0,y0,k,a,b,col):	
 	for i in range(1,b+1):
 		ellips(x0,y0,k,a,i,col)
-		ellips(x0-1,y0,k,a,i,col)
+		#ellips(x0-1,y0,k,a,i,col)
 		#ellips(x0+1,y0,k,a,i,col)
 		#ellips(x0,y0+1,k,a,i,col)
-		ellips(x0,y0-1,k,a,i,col)
+		ellips(x0-1,y0-1,k,a,i,col)
+
+'''
+def normal_ellips(x0, y0, col, r) # координаты центра, цвет в кавычках, полуось (на глазок)
+	x1 = x0 - r #координаты прямоугольника в который вписан овал 
+	x2 = x0 + r
+	y1 = y0 - r
+	y2 = y0 + r
+	changeCoords(circle(0, 0, r), [(x1, y1), (x2, y2)])'''
 
 def view():
 	ax=600
