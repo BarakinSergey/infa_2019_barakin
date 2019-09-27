@@ -75,7 +75,6 @@ def dog_house(x0,y0,bvx,bvy,hl,hr1,hr2,k,a,b):
 		ellips(x0+bvx/2-8*number,y0+(hl+hr1)/2+(number)**0.9,-0.1,5,7,"black")
 
 def dog(x0,y0,x,y,r,a,dalf,k,ori): #k=sizemeasure, ori=orientation 1 for left -1 for right
-	k=k/10
 	#body
 	coloredellips(x0+x*k,y0+y*k,-0.1,20*k,45*k,"grey")
 	coloredellips(x0+x*k*7/4,y0+y*k*3/4,-0.1,20*k,30*k,"grey")
