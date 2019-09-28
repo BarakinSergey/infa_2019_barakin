@@ -1,3 +1,6 @@
+#problems to solve: objects, that are created, are in process/in memory of cycle,
+# so time of realising of each circle is rising and rising
+
 from graph import *
 
 import math
@@ -31,12 +34,12 @@ def car(x, y, w, h): #x, y - coords of the corner, w - width, h - height
     penColor("yellow")
     global colgrad
     #last time was blue in RBG
-    r=111+int(100*math.fabs(math.sin(math.pi*colgrad/60)))
-    b=100+int(100*math.fabs(math.sin(math.pi*colgrad/60)))
-    g=12+int(127*math.fabs(math.sin(math.pi*colgrad/60)))
-    brushColor(int(255*r),int(255*b),int(255*g))
+    r=128+127*math.sin(254-1*(colgrad+5))
+    b=128+127*math.sin(254-1*(colgrad+3))
+    g=128+127*math.sin(254-1*(colgrad+1))
+    brushColor(int(r),int(b),int(g))
     #100, 100, 250 = blue
-    
+    #print(128+127*math.sin(254-10*(colgrad+5))) - for checking color's components
     rectangle(x + w*30/180, y + 0, x + w*100/180, y + h*20/60)
 
     rectangle(x + 0, y + h*20/60, x + w*180/180, y + h*50/60)
@@ -160,23 +163,10 @@ background(200, 100, 300, 500)
 
 background(0, 150, 300, 500)
 
-
 def cars():   
     global colgrad
     colgrad=colgrad+1
 
-    car(450, 520, -180, 60)
-
-    car(50, 500, 180, 60)
-
-    car(450, 470, -90, 30)
-
-    car(350, 450, -90, 30)
-
-    car(250, 460, -90, 30)
-
-    car(150, 460, -90, 30)
-    '''
     deleteObject(car(450, 520, -180, 60))
 
     deleteObject(car(50, 500, 180, 60))
@@ -188,7 +178,6 @@ def cars():
     deleteObject(car(250, 460, -90, 30))
 
     deleteObject(car(150, 460, -90, 30))
-    '''    
     
 onTimer(cars , 1)
 
