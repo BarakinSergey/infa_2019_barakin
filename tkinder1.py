@@ -7,7 +7,7 @@ root.geometry('1000x500')
 canv = Canvas(root,bg='white')
 canv.pack(fill=BOTH,expand=1)
 
-quan=1
+quan=2
 score=0
 colors = ['red','orange','yellow','green','blue', 'purple']
 global x, y, r, dx, dy, obj, xsit, ysit
@@ -66,6 +66,8 @@ global yp
 yp=0
 
 def clack(event):
+	global xp
+	global yp
 	xp = event.x
 	yp = event.y
 	if xp!=0 and yp!=0:
@@ -79,8 +81,9 @@ def click(num):
                     width=3, activedash=(5, 4))
 		score=score+1
 		print(score)
-		#objlist[num]=0
-		#new_ball(num)
+		canv.delete(objlist[num])
+		objlist[num]=0
+		new_ball(num)
 		canv.create_text(900, 100, text="Try to get it",
                 justify=CENTER, font="Verdana 14")
 		canv.create_text(900, 130, text="YOUR SCORE:",
@@ -111,14 +114,13 @@ def playing():
 	for point in range(1, quan+1):
 		move_ball(point)
 		print("move_ball",point)
-		#click(point)
-		#print("click",point)
+		click(point)
+		print("click",point)
 	root.after(10,playing)
 #main part
 
 create()
-#playing()
-#moving()
+playing()
 clicking()
 
 canv.create_rectangle(800, 0, 1000, 600, fill='yellow', outline='white',
