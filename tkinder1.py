@@ -7,7 +7,7 @@ root.geometry('1000x500')
 canv = Canvas(root,bg='white')
 canv.pack(fill=BOTH,expand=1)
 
-quan=2
+quan=10+1
 score=0
 colors = ['red','orange','yellow','green','blue', 'purple']
 global x, y, r, dx, dy, obj, xsit, ysit
@@ -37,8 +37,8 @@ def new_ball(num):
 	y = rnd(100,400)
 	ysit=y
 	r = rnd(20,30)
-	dx = rnd(-100,100)/50
-	dy = rnd(-100,100)/50
+	dx = rnd(-200,200)/50
+	dy = rnd(-200,200)/50
 	obj=canv.create_oval(x-r,y-r,x+r,y+r,fill = choice(colors), width=0)
 	xlist.insert(num,x)
 	ylist.insert(num,y)
@@ -82,8 +82,16 @@ def click(num):
 		score=score+1
 		print(score)
 		canv.delete(objlist[num])
+		#canv.create_oval(xlist[num]-rlist[num],ylist[num]-rlist[num],xlist[num]+rlist[num],ylist[num]+rlist[num],fill = "white", width=0)
+		xlist[num]=0
+		ylist[num]=0
+		rlist[num]=0
 		objlist[num]=0
-		new_ball(num)
+		#dxlist[num]=0
+		#dylist[num]=0
+		#xsitlist[num]=0
+		#ysitlist[num]=0
+		#new_ball(num)
 		canv.create_text(900, 100, text="Try to get it",
                 justify=CENTER, font="Verdana 14")
 		canv.create_text(900, 130, text="YOUR SCORE:",
@@ -96,18 +104,6 @@ def create():
 		new_ball(point)
 		print("new_ball",point)
 		
-def moving():
-	print("moving")
-	for point in range(1, quan+1):
-		move_ball(point)
-		print("move_ball",point)
-	
-def clicking():
-	print("clicking")
-	for point in range(1, quan+1):
-		click(point)
-		print("click",point)
-
 def playing():
 	canv.bind('<Button-1>', clack)
 	print("playing")
@@ -121,7 +117,6 @@ def playing():
 
 create()
 playing()
-clicking()
 
 canv.create_rectangle(800, 0, 1000, 600, fill='yellow', outline='white',
                     width=3, activedash=(5, 4))
