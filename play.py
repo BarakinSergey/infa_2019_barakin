@@ -101,7 +101,7 @@ class interaction:
 			print(score)
 			canv.delete('ball' + str(num))
 			pl_ay.new_ball(num,0)
-			canv.create_text(900, 100, text="Try to get as much\n as you can",
+			canv.create_text(900, 100, text="Try to get as much\n as you can for the next 1:30 min",
 	                justify=CENTER, font="Verdana 14")
 			canv.create_text(900, 135, text="YOUR SCORE:",
 	                justify=CENTER, font="Verdana 14")
@@ -131,13 +131,19 @@ def playing(): #realises the game
 	xplast=xp
 	yplast=yp
 	tnow=int(time.time()-t0)
-	if tnow <= 0*24+0*60+30:
+	canv.create_rectangle(870, 250, 930, 270, fill='yellow', outline='green',
+                    width=3)
+	canv.create_text(900, 260, text=tnow,
+                justify=CENTER, font="Verdana 14")
+	if tnow <= 0*24+1*60+0:
 		root.after(10,playing)
 	else:
 		canv.create_rectangle(150, 150, 850, 350, fill='yellow')
-		canv.create_text(500, 250, text="That's over",
+		canv.create_text(500, 200, text="That's over",
                 justify=CENTER, font="Verdana 30", fill="black")
-		
+		canv.create_text(500, 240, text="Print your nickname to save results, \n after that push enter",
+                justify=CENTER, font="Verdana 12", fill="black")
+
 
 
 #---------------------------------------------------------------------------------------------------
@@ -151,15 +157,19 @@ playing()
 
 canv.create_rectangle(800, 0, 1000, 600, fill='yellow', outline='white',
                     width=3)
-canv.create_rectangle(870, 150, 930, 170, fill='yellow', outline='green',
+canv.create_text(900, 100, text="Try to get as much\n as you can \n for the next \n 1:30 min",
+                justify=CENTER, font="Verdana 14")
+canv.create_text(900, 170, text="YOUR SCORE:",
+                justify=CENTER, font="Verdana 14")
+canv.create_rectangle(870, 190, 930, 210, fill='yellow', outline='green',
                     width=3)
-canv.create_text(900, 100, text="Try to get as much\n as you can",
+canv.create_text(900, 200, text=score,
                 justify=CENTER, font="Verdana 14")
-canv.create_text(900, 135, text="YOUR SCORE:",
+canv.create_text(900, 230, text="PASSED TIME:",
                 justify=CENTER, font="Verdana 14")
-canv.create_text(900, 160, text=score,
+canv.create_text(955, 260, text="min",
                 justify=CENTER, font="Verdana 14")
-
+	
 #-----------------------------------------------------------------------------------------------------
 
 canv.bind('<Button-1>', inter_action.clack)
