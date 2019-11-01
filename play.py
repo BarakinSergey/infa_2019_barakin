@@ -119,6 +119,7 @@ def create(): #creates quan number of balls #and count number of squares
 def playing(): #realises the game
 	global xplast
 	global yplast
+	global time
 	canv.bind('<Button-1>', inter_action.clack)
 	print("playing")
 	for point in range(1, quan+1):
@@ -129,11 +130,19 @@ def playing(): #realises the game
 			print("click",point)
 	xplast=xp
 	yplast=yp
-	root.after(10,playing)
+	tnow=int(time.time()-t0)
+	if tnow <= 0*24+0*60+30:
+		root.after(10,playing)
+	else:
+		canv.create_rectangle(150, 150, 850, 350, fill='yellow')
+		canv.create_text(500, 250, text="That's over",
+                justify=CENTER, font="Verdana 30", fill="black")
+		
+
 
 #---------------------------------------------------------------------------------------------------
 #main part
-
+t0 = time.time()
 create()
 playing()
 
