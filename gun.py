@@ -9,21 +9,27 @@ root.geometry('800x600')
 canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
 
-#------------------------------------------------------------------inputs-----------------------------------------------------------------------------------------
-global xtarget
-global ytarget
-global rtarget
+#------------------------------------------------------------------inputs---------------------------------------------------------------------
 xtarget = []
 ytarget = []
 rtarget = []
+k = []
 for i in range(0,2):
     xtarget.append(-1)
     ytarget.append(-1)
     rtarget.append(-1)
-#-------------------------------------------------------------------inputs-----------------------------------------------------------------------------------------
+    k.append(0)
+sky = canv.create_rectangle(0,0,800,566, fill='lightblue')
+ground = canv.create_rectangle(0,566,800,600, fill='green')
+screen1 = canv.create_text(400,30, text='', font='28')
+points = 0
+bullet = 0
+balls = []
 
-#-------------------------------------------------------------------classes----------------------------------------------------------------------------------------
-#-------------------------------------------------------------------class-ball-------------------------------------------------------------------------------------
+#-------------------------------------------------------------------inputs--------------------------------------------------------------------
+
+#-------------------------------------------------------------------classes-------------------------------------------------------------------
+#-------------------------------------------------------------------class-ball----------------------------------------------------------------
 class ball():
     def __init__(self, x=20, y=450):
         self.x = x
@@ -31,7 +37,7 @@ class ball():
         self.r = 10
         self.vx = 0
         self.vy = 0
-        self.color = choice(['blue', 'green', 'red', 'brown'])
+        self.color = choice(['blue', 'black', 'purple', 'yellow', 'white'])
         self.id = canv.create_oval(
                 self.x - self.r,
                 self.y - self.r,
@@ -41,7 +47,7 @@ class ball():
         )
         self.live = 70
 
-    def set_coords(self):
+    def set_coords(self): #puts in certain point
         canv.coords(
                 self.id,
                 self.x - self.r,
@@ -49,7 +55,7 @@ class ball():
                 self.x + self.r,
                 self.y + self.r
         )
-
+        
     def move(self): #moves the ball
         #ground
         if self.y>=550:
@@ -58,7 +64,7 @@ class ball():
             self.x += self.vx
             self.y += self.vy
             canv.move(self.id,self.vx,self.vy)
-            print(self.vx,self.vy)
+            #print(self.vx,self.vy)
         #right wall
         if self.x>=780:
             self.vy = 0.8*self.vy
@@ -66,7 +72,7 @@ class ball():
             self.x += self.vx
             self.y += self.vy
             canv.move(self.id,self.vx,self.vy)
-            print(self.vx,self.vy)
+            #print(self.vx,self.vy)
         #in the area of game
         if self.y<550 and self.x<785:
             self.vy = self.vy+0.5
@@ -74,25 +80,22 @@ class ball():
             self.y += self.vy
             self.vx = self.vx
             canv.move(self.id,self.vx,self.vy)
-            print(self.vx,self.vy)
+            #print(self.vx,self.vy)
 
-    def hittest(self, obj):
+    def hittest(self, obj, num): #check if ball hit any of targets
         #---------------------------------------------------------------------------Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂСЏРµС‚ СЃС‚Р°Р»РєРёРІР°Р»РєРёРІР°РµС‚СЃСЏ Р»Рё РґР°РЅРЅС‹Р№ РѕР±СЊРµРєС‚ СЃ С†РµР»СЊСЋ, РѕРїРёСЃС‹РІР°РµРјРѕР№ РІ РѕР±СЊРµРєС‚Рµ obj.
         #---------------------------------------------------------------------------Args:
         #---------------------------------------------------------------------------    obj: РћР±СЊРµРєС‚, СЃ РєРѕС‚РѕСЂС‹Рј РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ СЃС‚РѕР»РєРЅРѕРІРµРЅРёРµ.
         #---------------------------------------------------------------------------Returns:
         #---------------------------------------------------------------------------    Р’РѕР·РІСЂР°С‰Р°РµС‚ True РІ СЃР»СѓС‡Р°Рµ СЃС‚РѕР»РєРЅРѕРІРµРЅРёСЏ РјСЏС‡Р° Рё С†РµР»Рё. Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІРѕР·РІСЂР°С‰Р°РµС‚ False.
-        
-        global xtarget
-        global ytarget
-        global rtarget
-        if (self.x-xtarget)**2+(self.y-ytarget)**2 < (self.r+rtarget)**2:
+        if ((self.x-xtarget[num])**2+(self.y-ytarget[num])**2 < (self.r+rtarget[num])**2) and (k[num]==0):
+            print(num,"target")
             return True
         else:
             return False
-#-----------------------------------------------------------------------------class-ball----------------------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------class-gun-----------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------class-ball------------------------------------------------------
+b = ball()
+#-----------------------------------------------------------------------------class-gun-------------------------------------------------------
 class gun():
     def __init__(self):
         self.f2_power = 10
@@ -138,26 +141,26 @@ class gun():
 
     def power_up(self):
         if self.f2_on:
-            if self.f2_power < 100:
+            if self.f2_power <= 100:
                 self.f2_power += 1
             canv.itemconfig(self.id, fill='orange')
         else:
             canv.itemconfig(self.id, fill='black')
-#----------------------------------------------------------------------------class-gun------------------------------------------------------------------------------------------------------------
-
-#----------------------------------------------------------------------------class-target---------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------class-gun--------------------------------------------------------
+g1 = gun()
+#----------------------------------------------------------------------------class-target-----------------------------------------------------
 class target():
     def __init__(self):
-        self.points = 0
-        self.live = 1
-        
+        global points
+        self.live = 2
         #---------------------------------------------------------------------FIXME: don't work!!! How to call this functions when object is created?
-        
-        self.id = canv.create_oval(0,0,0,0)
-        self.id_points = canv.create_text(30,30,text = self.points,font = '28')
-        self.new_target()
+        self.id0 = canv.create_oval(0,0,0,0)
+        self.id1 = canv.create_oval(0,0,0,0)
+        self.id_points = canv.create_text(30,30,text = points,font = '28')
+        for i in range(0,2):
+            self.new_target(i)
 
-    def new_target(self):
+    def new_target(self,num):
         global xtarget
         global ytarget
         global rtarget
@@ -165,62 +168,74 @@ class target():
         x = self.x = rnd(600, 780)
         y = self.y = rnd(300, 550)
         r = self.r = rnd(5, 50)
-        xtarget = x
-        ytarget = y
-        rtarget = r
+        xtarget[num] = x
+        ytarget[num] = y
+        rtarget[num] = r
         color = self.color = 'red'
-        canv.coords(self.id, x-r, y-r, x+r, y+r)
-        canv.itemconfig(self.id, fill=color)
+        if num==0:
+            canv.coords(self.id0, x-r, y-r, x+r, y+r)
+            canv.itemconfig(self.id0, fill=color)
+        if num==1:
+            canv.coords(self.id1, x-r, y-r, x+r, y+r)
+            canv.itemconfig(self.id1, fill=color)
 
-    def hit(self, points=1):
+
+    def hit(self, num):
         #----------------------------------------------------------------------РџРѕРїР°РґР°РЅРёРµ С€Р°СЂРёРєР° РІ С†РµР»СЊ.
+        global points
         #canv.create_text(100,100, self.id)
-        canv.coords(self.id, -10, -10, -10, -10)
-        self.points += points
-        canv.itemconfig(self.id_points, text=self.points)
+        if k[num]==0:
+            #print(k, "k")
+            if num==0:
+                canv.coords(self.id0, -10, -10, -10, -10)
+                points += 1
+                k[num]=1
+            if num==1:
+                canv.coords(self.id1, -10, -10, -10, -10)
+                points += 1
+                k[num]=1
 
-#------------------------------------------------------------------------------------------class-target--------------------------------------------------------------------------------------------------------
-#------------------------------------------------------------------------------------------classes-------------------------------------------------------------------------------------------------------------
+        canv.itemconfig(self.id_points, text=points)
 
-#------------------------------------------------------------------------------------------main-body------------------------------------------------------------------------------------------------------------
-sky = canv.create_rectangle(0,0,800,566, fill='lightblue')
-ground = canv.create_rectangle(0,566,800,600, fill='green')
+#------------------------------------------------------------------------------------------class-target---------------------------------------
 t1 = target()
-screen1 = canv.create_text(400, 300, text='', font='28')
-g1 = gun()
-bullet = 0
-balls = []
+#------------------------------------------------------------------------------------------classes--------------------------------------------
 
+#------------------------------------------------------------------------------------------main-body-function---------------------------------
 def new_game(event=''):
-    global gun, t1, screen1, balls, bullet
-    t1.new_target()
-    bullet = 0
-    balls = []
+    global gun, t1, screen1, balls, bullet, points
+    for i in range(0,2):
+        t1.new_target(i)
     canv.bind('<Button-1>', g1.fire2_start)
     canv.bind('<ButtonRelease-1>', g1.fire2_end)
     canv.bind('<Motion>', g1.targetting)
 
     z = 0.03
-    t1.live = 1
-    while t1.live or balls:
+    t1.live = 2
+    while (t1.live!=0) or balls:
+        print(t1.live,ball)
+        canv.itemconfig(screen1, text='You have used ' + str(bullet) + ' bullets to hit ' + str(points) + ' target')
         for b in balls:
             b.move()
-            if b.hittest(t1) and t1.live:
-                t1.live = 0
-                t1.hit()
-                canv.bind('<Button-1>', '')
-                canv.bind('<ButtonRelease-1>', '')
-                canv.itemconfig(screen1, text='You have used ' + str(bullet) + ' bullets to hit the target')
+            for i in range(0,2):
+                if b.hittest(t1,i) and (t1.live>0):
+                    if k[i]==0:
+                        t1.live -= 1
+                        t1.hit(i)
+                        k[i]=1
+                        #print(k[i],points)
+                    canv.bind('<Button-1>', '')
+                    canv.bind('<ButtonRelease-1>', '')
         canv.update()
-        time.sleep(0.03)
+        time.sleep(z)
         g1.targetting()
         g1.power_up()
     canv.itemconfig(screen1, text='')
     canv.delete(gun)
     root.after(750, new_game)
-#------------------------------------------------------------------------------------main-body---------------------------------------------------------------
+#------------------------------------------------------------------------------------main-body-function---------------------------------------
 
-#------------------------------------------------------------------------------------realise-----------------------------------------------------------------
+#------------------------------------------------------------------------------------realise--------------------------------------------------
 new_game()
 mainloop()
-#------------------------------------------------------------------------------------realise-----------------------------------------------------------------
+#------------------------------------------------------------------------------------realise--------------------------------------------------
