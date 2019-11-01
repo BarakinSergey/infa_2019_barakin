@@ -130,6 +130,7 @@ class gun():
         #------------------------------------------------------------------------------РџСЂРёС†РµР»РёРІР°РЅРёРµ. Р—Р°РІРёСЃРёС‚ РѕС‚ РїРѕР»РѕР¶РµРЅРёСЏ РјС‹С€Рё.
         if event:
             self.an = math.atan((event.y-450) / (event.x-20))
+            #print(event.x,event.y)
         if self.f2_on:
             canv.itemconfig(self.id, fill='orange')
         else:
@@ -213,7 +214,7 @@ def new_game(event=''):
     z = 0.03
     t1.live = 2
     while (t1.live!=0) or balls:
-        print(t1.live,ball)
+        #print(t1.live,ball)
         canv.itemconfig(screen1, text='You have used ' + str(bullet) + ' bullets to hit ' + str(points) + ' target')
         for b in balls:
             b.move()
@@ -222,12 +223,12 @@ def new_game(event=''):
                     if k[i]==0:
                         t1.live -= 1
                         t1.hit(i)
-                        k[i]=1
-                        #print(k[i],points)
+                        #k[i]=1
+                        print(k[i],points)
                     canv.bind('<Button-1>', '')
                     canv.bind('<ButtonRelease-1>', '')
         canv.update()
-        time.sleep(z)
+        time.sleep(0.03)
         g1.targetting()
         g1.power_up()
     canv.itemconfig(screen1, text='')
