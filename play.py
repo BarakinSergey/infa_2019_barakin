@@ -5,7 +5,7 @@ import time
 root = Tk()
 root.geometry('1000x500')
 
-canv = Canvas(root,bg='white')
+canv = Canvas(root,bg='white') 
 canv.pack(fill=BOTH,expand=1)
 
 #-----------------------------------------------------------------------------------------------------
@@ -51,6 +51,9 @@ for i in range(1,12+1):
 	result.append(0)
 file = open('table.txt', 'a')
 file.close()
+
+global phase
+phase = 0
 
 #---------------------------------------------------------------------------------------------------
 #classes and functions
@@ -106,7 +109,7 @@ class interaction:
 
 	def click(self, num): #checks if user pointed in the area of any ball, plusses him
 		global score
-		print(xp,yp,(xp-xsitlist[num])*(xp-xsitlist[num])+(yp-ysitlist[num])*(yp-ysitlist[num]),rlist[num]*rlist[num])
+		#print(xp,yp,(xp-xsitlist[num])*(xp-xsitlist[num])+(yp-ysitlist[num])*(yp-ysitlist[num]),rlist[num]*rlist[num])
 		if (xp-xsitlist[num])*(xp-xsitlist[num])+(yp-ysitlist[num])*(yp-ysitlist[num])<=rlist[num]*rlist[num]:
 			score=score+1
 			print(score)
@@ -128,47 +131,130 @@ def create(): #creates quan number of balls #and count number of squares
 	print("create")
 	for point in range(1, quan+1):
 		pl_ay.new_ball(point,1)
-		print("new_ball",point)
-		
+		#print("new_ball",point)
+
+def clickact(num): #checks if user pointed in the area of nummed button
+	global score
+	global phase
+	global t0
+	if (250<xplast) and (xplast<750) and (170<yplast) and (yplast<220):
+		phase = 1
+		canv.create_rectangle(0, 0, 1000, 600, fill='white')
+		create()
+		canv.create_rectangle(800, 0, 1000, 600, fill='yellow', outline='white',
+	                    width=3)
+		canv.create_text(900, 100, text="Try to get as much\n as you can \n for the next \n 60 sec",
+		                justify=CENTER, font="Verdana 14")
+		canv.create_text(900, 170, text="YOUR SCORE:",
+		                justify=CENTER, font="Verdana 14")
+		canv.create_rectangle(870, 190, 930, 210, fill='yellow', outline='green',
+		                    width=3)
+		canv.create_text(900, 200, text=score,
+		                justify=CENTER, font="Verdana 14")
+		canv.create_text(900, 230, text="PASSED TIME:",
+		                justify=CENTER, font="Verdana 14")
+		canv.create_text(955, 260, text="sec",
+		                justify=CENTER, font="Verdana 14")
+		t0 = time.time()
+		playing()
+	if (250<xplast) and (xplast<750) and (240<yplast) and (yplast<290):
+		phase = 2
+		#reading result table
+		file = open('table.txt', 'r')
+		number = 0
+		for lines in file:
+			if number == (number//2)*2:
+				person[number//2] = lines
+			if number == (number//2)*2+1:
+				result[number//2-1] = lines
+			number += 1
+		for i in range(0,12):
+			print(person[i], 'person ', result[i], 'result ')
+		file.close()
+		#showing result table
+		canv.create_rectangle( 10, 10, 990, 490, fill='green', outline='red', width=3)
+		canv.create_text(500, 50, text="TABLE OF 10 GREATEST RESULTS\nCONGRATULATIONS TO THESE PLAYERS!",
+                fill="yellow" , justify=CENTER, font="Verdana 20")
+		for i in range(0,10):
+			canv.create_text(200, 100+30*(1+i), text=str(person[i]),
+                fill="red", font="Verdana 17")
+			canv.create_text(700, 100+30*(1+i), text=str(result[i-1]),
+                fill="red", font="Verdana 17")
+			
+def active(): #for affecting programm 
+	global xplast
+	global yplast
+	global phase
+	canv.bind('<Button-1>', inter_action.clack)
+	print(phase)
+	if phase==0:
+		#print("active")
+		#canv.create_text(500, 100, text="CATCH  	THE 	BALL\nget as much as possible for fixed time",
+	    #            fill="green" , justify=CENTER, font="Verdana 14")
+		canv.create_rectangle(0, 0, 1000, 600, fill='white')
+		canv.create_rectangle( 50,  50, 950, 150, fill='yellow', outline='green', width=3)
+		canv.create_text(500, 100, text="CATCH  	THE 	BALL\nget as much as possible for fixed time",
+	                fill="green" , justify=CENTER, font="Verdana 14")
+		canv.create_rectangle(250, 170, 750, 220, fill='yellow', outline='green', width=3)
+		canv.create_text(500, 195, text="PLAY",
+	                fill="green" , justify=CENTER, font="Verdana 14")
+		canv.create_rectangle(250, 240, 750, 290, fill='yellow', outline='green', width=3)
+		canv.create_text(500, 265, text="RESULTS",
+		                fill="green" , justify=CENTER, font="Verdana 14")
+	if (xplast-xp)*(yplast-yp)!=0:
+		clickact(1)
+		print("clickact")
+	xplast=xp
+	yplast=yp
+	root.after(10,active)
+
 def playing(): #realises the game
 	global xplast
 	global yplast
-	global time
+	global t0
 	global name
+	global phase
 	canv.bind('<Button-1>', inter_action.clack)
-	print("playing")
-	for point in range(1, quan+1):
-		pl_ay.move_ball(point)
-		print("move_ball",point)
-		if (xplast-xp)*(yplast-yp)!=0:
-			inter_action.click(point)
-			print("click",point)
-	xplast=xp
-	yplast=yp
-	tnow=int(time.time()-t0)
-	canv.create_rectangle(870, 250, 930, 270, fill='yellow', outline='green',
-                    width=3)
-	canv.create_text(900, 260, text=tnow,
-                justify=CENTER, font="Verdana 14")
-	if tnow <= 0*24+0*60+0.5:
-		root.after(5,playing)
-	else:
-		canv.create_rectangle(150, 150, 850, 350, fill='yellow')
-		canv.create_text(500, 200, text="That's over",
-                justify=CENTER, font="Verdana 30", fill="black")
-		canv.create_text(500, 240, text="Print your nickname to save results, \n after that push enter",
-                justify=CENTER, font="Verdana 12", fill="black")
-		e.place(x=450, y=270, width=100, height=30)
-		b.place(x=450, y=310, width=100, height=30)
-		print("resulttable")
-		root.after(5, resulttable)
+	print("playing",phase)
+	if phase==1:
+		for point in range(1, quan+1):
+			pl_ay.move_ball(point)
+			#print("move_ball",point)
+			if (xplast-xp)*(yplast-yp)!=0:
+				inter_action.click(point)
+				print("click",point)
+		xplast=xp
+		yplast=yp
+		tnow=int(time.time()-t0)
+		canv.create_rectangle(870, 250, 930, 270, fill='yellow', outline='green',
+	                    width=3)
+		canv.create_text(900, 260, text=tnow,
+	                justify=CENTER, font="Verdana 14")
+		if tnow <= 0*24+0*60+5*1:
+			root.after(1,playing)
+		else:
+			phase=1.5
+			canv.create_rectangle(150, 150, 850, 350, fill='yellow')
+			canv.create_text(500, 200, text="That's over",
+	                justify=CENTER, font="Verdana 30", fill="black")
+			canv.create_text(500, 240, text="Print your nickname to save results, \n after that push enter",
+	                justify=CENTER, font="Verdana 12", fill="black")
+			e.place(x=450, y=270, width=100, height=30)
+			b.place(x=450, y=310, width=100, height=30)
+			if phase == 1.5:
+				root.after(5, playing)
+			if name!=0 :
+				print("resulttable")
+				phase = 2
+				root.after(5, resulttable)
 
 def resulttable(): #entering score in table
 	global name
 	global score
 	global person
 	global result
-	if name!=0:
+	global phase
+	if name!=0 and phase==2:
 		name = str(name) + '\n'
 		score = str(score) + '\n'
 		person.insert(11,name)
@@ -182,7 +268,7 @@ def resulttable(): #entering score in table
 			if number == (number//2)*2:
 				person[number//2] = lines
 			if number == (number//2)*2+1:
-				result[number//2-1] = lines
+				result[number//2] = lines
 			number += 1
 		for i in range(0,12):
 			print(person[i], 'person ', result[i], 'result ')
@@ -213,32 +299,18 @@ def resulttable(): #entering score in table
 				file.write(str(result[i]))
 		file.close()
 		print("return to menu")
+		phase = 0
+		name = ""
+		score = 0
+		print("phase", name, score, phase)
+		active()
 
 	b.bind('<Button-1>', inter_action.nameenter)
 	canv.bind('<Button-1>', inter_action.clack)
 
-#----------------------------------------------------------------------------------------------------
-#view
-
-canv.create_rectangle(800, 0, 1000, 600, fill='yellow', outline='white',
-                    width=3)
-canv.create_text(900, 100, text="Try to get as much\n as you can \n for the next \n 60 sec",
-                justify=CENTER, font="Verdana 14")
-canv.create_text(900, 170, text="YOUR SCORE:",
-                justify=CENTER, font="Verdana 14")
-canv.create_rectangle(870, 190, 930, 210, fill='yellow', outline='green',
-                    width=3)
-canv.create_text(900, 200, text=score,
-                justify=CENTER, font="Verdana 14")
-canv.create_text(900, 230, text="PASSED TIME:",
-                justify=CENTER, font="Verdana 14")
-canv.create_text(955, 260, text="sec",
-                justify=CENTER, font="Verdana 14")
-
 #---------------------------------------------------------------------------------------------------
 #main part
-t0 = time.time()
+active()
 print("start")
-create()
-root.after(0, playing)
+root.after(0, active)
 mainloop()
