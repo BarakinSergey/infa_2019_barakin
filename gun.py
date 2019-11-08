@@ -10,15 +10,21 @@ canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
 
 #------------------------------------------------------------------inputs---------------------------------------------------------------------
+idt = []
 xtarget = []
 ytarget = []
 rtarget = []
-k = []
-for i in range(0,2):
+vxtarget = []
+vytarget = []
+LIVE = 5
+TARG = 5
+for i in range(0,TARG):
+    idt.append(0)
     xtarget.append(-1)
     ytarget.append(-1)
     rtarget.append(-1)
-    k.append(0)
+    vxtarget.append(0)
+    vytarget.append(0)
 sky = canv.create_rectangle(0,0,800,566, fill='lightblue')
 ground = canv.create_rectangle(0,566,800,600, fill='green')
 screen1 = canv.create_text(400,30, text='', font='28')
@@ -31,10 +37,14 @@ balls = []
 #-------------------------------------------------------------------classes-------------------------------------------------------------------
 #-------------------------------------------------------------------class-ball----------------------------------------------------------------
 class ball():
-    def __init__(self, x=20, y=450):
-        self.x = x
-        self.y = y
-        self.r = 10
+    global xcreate
+    global ycreate
+    xcreate = 20
+    ycreate = 450
+    def __init__(self):
+        self.x = xcreate
+        self.y = ycreate
+        self.r = 5
         self.vx = 0
         self.vy = 0
         self.color = choice(['blue', 'black', 'purple', 'yellow', 'white'])
@@ -59,16 +69,16 @@ class ball():
     def move(self): #moves the ball
         #ground
         if self.y>=550:
-            self.vy = -0.9*self.vy
-            self.vx = 0.8*self.vx
+            self.vy = -self.vy
+            self.vx = self.vx
             self.x += self.vx
             self.y += self.vy
             canv.move(self.id,self.vx,self.vy)
             #print(self.vx,self.vy)
         #right wall
         if self.x>=780:
-            self.vy = 0.8*self.vy
-            self.vx = -0.9*self.vx
+            self.vy = self.vy
+            self.vx = -self.vx
             self.x += self.vx
             self.y += self.vy
             canv.move(self.id,self.vx,self.vy)
@@ -88,7 +98,7 @@ class ball():
         #---------------------------------------------------------------------------    obj: РћР±СЊРµРєС‚, СЃ РєРѕС‚РѕСЂС‹Рј РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ СЃС‚РѕР»РєРЅРѕРІРµРЅРёРµ.
         #---------------------------------------------------------------------------Returns:
         #---------------------------------------------------------------------------    Р’РѕР·РІСЂР°С‰Р°РµС‚ True РІ СЃР»СѓС‡Р°Рµ СЃС‚РѕР»РєРЅРѕРІРµРЅРёСЏ РјСЏС‡Р° Рё С†РµР»Рё. Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІРѕР·РІСЂР°С‰Р°РµС‚ False.
-        if ((self.x-xtarget[num])**2+(self.y-ytarget[num])**2 < (self.r+rtarget[num])**2) and (k[num]==0):
+        if ((self.x-xtarget[num])**2+(self.y-ytarget[num])**2 < (self.r+rtarget[num])**2):
             print(num,"target")
             return True
         else:
@@ -105,7 +115,8 @@ class gun():
         #---------------------------------------------------------------------------FIXME: don't know how to set it...
 
     def fire2_start(self, event):
-        self.f2_on = 1
+    	#print("fire_start")
+    	self.f2_on = 1
 
     def fire2_end(self, event):
         #----------------------------------------------------------------------------Р’С‹СЃС‚СЂРµР» РјСЏС‡РѕРј.
@@ -153,49 +164,70 @@ g1 = gun()
 class target():
     def __init__(self):
         global points
-        self.live = 2
+        self.live = 0
         #---------------------------------------------------------------------FIXME: don't work!!! How to call this functions when object is created?
-        self.id0 = canv.create_oval(0,0,0,0)
-        self.id1 = canv.create_oval(0,0,0,0)
+        for i in range(0,TARG):
+            idt[i] = canv.create_oval(0,0,0,0)
         self.id_points = canv.create_text(30,30,text = points,font = '28')
         for i in range(0,2):
             self.new_target(i)
 
     def new_target(self,num):
+        global idt
         global xtarget
         global ytarget
         global rtarget
+        global vxtarget
+        global vytarget
         #---------------------------------------------------------------------РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРѕРІРѕР№ С†РµР»Рё. 
-        x = self.x = rnd(600, 780)
+        x = self.x = rnd(400, 750)
         y = self.y = rnd(300, 550)
-        r = self.r = rnd(5, 50)
+        r = self.r = rnd(20, 50)
+        vx = self.vx = rnd(-2,2)
+        vy = self.vy = rnd(-2,2)
         xtarget[num] = x
         ytarget[num] = y
         rtarget[num] = r
+        vxtarget[num] = vx
+        vytarget[num] = vy
+        print(x,y,r,vx,vy)
         color = self.color = 'red'
-        if num==0:
-            canv.coords(self.id0, x-r, y-r, x+r, y+r)
-            canv.itemconfig(self.id0, fill=color)
-        if num==1:
-            canv.coords(self.id1, x-r, y-r, x+r, y+r)
-            canv.itemconfig(self.id1, fill=color)
+        canv.coords(idt[num], x-r, y-r, x+r, y+r)
+        canv.itemconfig(idt[num], fill=color)
 
-
+    def movet(self,num): #moves the target0
+        #ground
+        if ytarget[num]>=600-rtarget[num] or ytarget[num]<=rtarget[num]:
+            vytarget[num] = -vytarget[num]
+            #vxtarget[num] = vxtarget[num]
+            xtarget[num] += vxtarget[num]
+            ytarget[num] += vytarget[num]
+            canv.move(idt[num],vxtarget[num],vytarget[num])
+            #print(self.vx,self.vy)
+        #right wall
+        if xtarget[num]>=800-rtarget[num] or xtarget[num]<=rtarget[num]:
+            #vytarget[num] = vytarget[num]
+            vxtarget[num] = -vxtarget[num]
+            xtarget[num] += vxtarget[num]
+            ytarget[num] += vytarget[num]
+            canv.move(idt[num],vxtarget[num],vytarget[num])
+            #print(self.vx,self.vy)
+        #in the area of game
+        if ytarget[num]<600-rtarget[num] and xtarget[num]<800-rtarget[num]:
+            #vytarget[num] = vytarget[num]
+            #vxtarget[num] = vxtarget[num]
+            xtarget[num] += vxtarget[num]
+            ytarget[num] += vytarget[num]
+            canv.move(idt[num],vxtarget[num],vytarget[num])
+    
     def hit(self, num):
         #----------------------------------------------------------------------РџРѕРїР°РґР°РЅРёРµ С€Р°СЂРёРєР° РІ С†РµР»СЊ.
         global points
         #canv.create_text(100,100, self.id)
-        if k[num]==0:
-            #print(k, "k")
-            if num==0:
-                canv.coords(self.id0, -10, -10, -10, -10)
-                points += 1
-                k[num]=1
-            if num==1:
-                canv.coords(self.id1, -10, -10, -10, -10)
-                points += 1
-                k[num]=1
-
+        canv.coords(idt[num], -10, -10, -10, -10)
+        points += 1
+        if t1.live>1:
+	        t1.new_target(num)
         canv.itemconfig(self.id_points, text=points)
 
 #------------------------------------------------------------------------------------------class-target---------------------------------------
@@ -204,29 +236,38 @@ t1 = target()
 
 #------------------------------------------------------------------------------------------main-body-function---------------------------------
 def new_game(event=''):
-    global gun, t1, screen1, balls, bullet, points
-    for i in range(0,2):
+    global gun, t1, screen1, balls, bullet, points, LIVE, TARG
+    for i in range(0,TARG):
         t1.new_target(i)
     canv.bind('<Button-1>', g1.fire2_start)
     canv.bind('<ButtonRelease-1>', g1.fire2_end)
     canv.bind('<Motion>', g1.targetting)
 
     z = 0.03
-    t1.live = 2
+    gone = 0
+    t1.live = LIVE
     while (t1.live!=0) or balls:
         #print(t1.live,ball)
         canv.itemconfig(screen1, text='You have used ' + str(bullet) + ' bullets to hit ' + str(points) + ' target')
         for b in balls:
             b.move()
-            for i in range(0,2):
+            for j in range(0,TARG):
+            	if t1.live != 0:
+            	    t1.movet(j)
+            	elif gone <= TARG:
+                    canv.create_oval(xtarget[j]-rtarget[j]-5, ytarget[j]-rtarget[j]-1, xtarget[j]+rtarget[j]+1, ytarget[j]+rtarget[j]+1, fill='lightblue', width=0)
+                    vytarget[j] = 0
+                    vxtarget[j] = 0
+                    xtarget[j] = 0
+                    ytarget[j] = 0
+                    rtarget[j] = 0
+                    gone += 1
+            for i in range(0,TARG):
                 if b.hittest(t1,i) and (t1.live>0):
-                    if k[i]==0:
-                        t1.live -= 1
-                        t1.hit(i)
-                        #k[i]=1
-                        print(k[i],points)
-                    canv.bind('<Button-1>', '')
-                    canv.bind('<ButtonRelease-1>', '')
+                    t1.live -= 1
+                    t1.hit(i)
+                    #canv.bind('<Button-1>', '')
+                    #canv.bind('<ButtonRelease-1>', '')
         canv.update()
         time.sleep(0.03)
         g1.targetting()
