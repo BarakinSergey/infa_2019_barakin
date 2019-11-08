@@ -168,8 +168,8 @@ def clickact(num): #checks if user pointed in the area of nummed button
 			if number == (number//2)*2+1:
 				result[number//2-1] = lines
 			number += 1
-		for i in range(0,12):
-			print(person[i], 'person ', result[i], 'result ')
+		#for i in range(0,12):
+		#	print(person[i], 'person ', result[i], 'result ')
 		file.close()
 		#showing result table
 		canv.create_rectangle( 10, 10, 990, 490, fill='green', outline='red', width=3)
@@ -180,13 +180,20 @@ def clickact(num): #checks if user pointed in the area of nummed button
                 fill="red", font="Verdana 17")
 			canv.create_text(700, 100+30*(1+i), text=str(result[i-1]),
                 fill="red", font="Verdana 17")
+		canv.create_rectangle( 420, 445, 580, 475, fill='white', outline='red', width=3)
+		canv.create_text(500, 460, text="return to menu",
+                fill="red" , justify=CENTER, font="Verdana 13")
+	if phase==2 and (420<xplast) and (xplast<580) and (445<yplast) and (yplast<475):
+		print("return to menu")
+		phase=0
+		active()
+		
 			
 def active(): #for affecting programm 
 	global xplast
 	global yplast
 	global phase
 	canv.bind('<Button-1>', inter_action.clack)
-	print(phase)
 	if phase==0:
 		#print("active")
 		#canv.create_text(500, 100, text="CATCH  	THE 	BALL\nget as much as possible for fixed time",
@@ -206,7 +213,7 @@ def active(): #for affecting programm
 		print("clickact")
 	xplast=xp
 	yplast=yp
-	root.after(10,active)
+	root.after(1,active)
 
 def playing(): #realises the game
 	global xplast
@@ -215,7 +222,6 @@ def playing(): #realises the game
 	global name
 	global phase
 	canv.bind('<Button-1>', inter_action.clack)
-	print("playing",phase)
 	if phase==1:
 		for point in range(1, quan+1):
 			pl_ay.move_ball(point)
@@ -230,23 +236,20 @@ def playing(): #realises the game
 	                    width=3)
 		canv.create_text(900, 260, text=tnow,
 	                justify=CENTER, font="Verdana 14")
-		if tnow <= 0*24+0*60+5*1:
+		if tnow <= 0*24+1*60+0*1-1: #-----------------------------------------------------------------------------TIMER----------------------
 			root.after(1,playing)
 		else:
 			phase=1.5
 			canv.create_rectangle(150, 150, 850, 350, fill='yellow')
 			canv.create_text(500, 200, text="That's over",
 	                justify=CENTER, font="Verdana 30", fill="black")
-			canv.create_text(500, 240, text="Print your nickname to save results, \n after that push enter",
+			canv.create_text(500, 240, text="Print your nickname to save results, \n after that push enter\n instead of space between words use underline",
 	                justify=CENTER, font="Verdana 12", fill="black")
 			e.place(x=450, y=270, width=100, height=30)
 			b.place(x=450, y=310, width=100, height=30)
-			if phase == 1.5:
-				root.after(5, playing)
-			if name!=0 :
-				print("resulttable")
-				phase = 2
-				root.after(5, resulttable)
+			print("resulttable")
+			phase = 2
+			root.after(1, resulttable)
 
 def resulttable(): #entering score in table
 	global name
@@ -254,7 +257,8 @@ def resulttable(): #entering score in table
 	global person
 	global result
 	global phase
-	if name!=0 and phase==2:
+	print(name)
+	if name!=0:
 		name = str(name) + '\n'
 		score = str(score) + '\n'
 		person.insert(11,name)
@@ -300,7 +304,7 @@ def resulttable(): #entering score in table
 		file.close()
 		print("return to menu")
 		phase = 0
-		name = ""
+		name = 0
 		score = 0
 		print("phase", name, score, phase)
 		active()
